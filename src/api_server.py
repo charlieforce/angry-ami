@@ -8,6 +8,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
 import logging
+from werkzeug.utils import secure_filename
 
 # Load environment
 load_dotenv()
@@ -15,6 +16,18 @@ load_dotenv()
 # Create Flask app
 app = Flask(__name__)
 CORS(app)
+
+# Upload settings
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'docx'}
+MAX_FILE_SIZE = 50 * 1024 * 1024
+UPLOAD_FOLDER = './data/uploads'
+
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = MAX_FILE_SIZE
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Initialize Hermes Agent in background
 agent = None
@@ -25,8 +38,10 @@ def init_agent():
     global agent, agent_ready
     try:
         from src.agent import HermesAgent
+        from src.file_processor import FileProcessor
         print("\n[INITIALIZING HERMES AGENT...]")
         agent = HermesAgent()
+        agent.file_processor = FileProcessor()
         agent_ready = True
         print("[✓ HERMES AGENT READY]\n")
     except Exception as e:
@@ -76,6 +91,51 @@ def chat():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/upload', methods=['POST'])
+def upload_file():
+    """Handle document uploads for Ami to learn from"""
+    if not agent_ready:
+        return jsonify({'error': 'Agent still initializing'}), 503
+    
+    try:
+        if 'file' not in request.files:
+            return jsonify({'error': 'No file provided'}), 400
+        
+        file = request.files['file']
+        
+        if file.filename == '':
+            return jsonify({'error': 'No file selected'}), 400
+        
+        if not allowed_file(file.filename):
+            return jsonify({'error': 'File type not allowed. Use: txt, pdf, docx'}), 400
+        
+        # Save uploaded file
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+        
+        # Process file
+        content = agent.file_processor.process_file(filepath)
+        
+        if not content:
+            return jsonify({'error': 'Could not read file'}), 400
+        
+        # Save to knowledge base
+        result = agent.file_processor.save_to_knowledge_base(filename, content)
+        
+        if result['success']:
+            return jsonify({
+                'status': 'success',
+                'message': f'Document uploaded and learned: {filename}',
+                'kb_file': result['filename'],
+                'size': result['size']
+            }), 200
+        else:
+            return jsonify({'error': result['error']}), 500
+            
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/interests', methods=['GET'])
 def get_interests():
     """Get Charlie's interests"""
@@ -102,7 +162,7 @@ def get_profile():
     
     return jsonify({'error': 'Profile not found'}), 404
 
-def run_server(host='0.0.0.0', port=5000, debug=False):
+def run_server(host='0.0.0.0', port=8000, debug=False):
     """Run the API server"""
     print("=" * 80)
     print("🔥 ANGRY AMI API SERVER STARTING 🔥")
@@ -114,7 +174,7 @@ def run_server(host='0.0.0.0', port=5000, debug=False):
     init_thread = threading.Thread(target=init_agent, daemon=True)
     init_thread.start()
     
-    # Start Flask server - bind to 0.0.0.0 so it's accessible
+    # Start Flask server
     print(f"\n * Running on http://0.0.0.0:{port}")
     print(" * Press CTRL+C to quit\n")
     app.run(host=host, port=port, debug=debug)

@@ -27,7 +27,6 @@ function App() {
     
     if (!input.trim()) return;
 
-    // Add user message
     const userMessage = {
       id: messages.length + 1,
       sender: 'user',
@@ -40,17 +39,20 @@ function App() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message: input })
-      });
+      let data;
+      
+      if (window.electronAPI) {
+        data = await window.electronAPI.chat(input);
+      } else {
+        const response = await fetch('http://localhost:5000/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: input })
+        });
+        data = await response.json();
+      }
 
-      const data = await response.json();
-
-      if (response.ok) {
+      if (data.ami_response) {
         const amiMessage = {
           id: messages.length + 2,
           sender: 'ami',
@@ -62,7 +64,7 @@ function App() {
         const errorMessage = {
           id: messages.length + 2,
           sender: 'ami',
-          text: 'Sorry, I ran into an error. Let me get back to you.',
+          text: data.error || 'Sorry, I ran into an error.',
           timestamp: new Date()
         };
         setMessages(msgs => [...msgs, errorMessage]);
@@ -72,7 +74,7 @@ function App() {
       const errorMessage = {
         id: messages.length + 2,
         sender: 'ami',
-        text: 'Connection error. Make sure the server is running.',
+        text: 'Connection error.',
         timestamp: new Date()
       };
       setMessages(msgs => [...msgs, errorMessage]);

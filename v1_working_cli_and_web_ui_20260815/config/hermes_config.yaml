@@ -1,0 +1,45 @@
+# HERMES AGENT CONFIGURATION
+# Orchestration manager for Angry Ami
+
+agent:
+  name: "Angry Ami"
+  description: "Charlie is DeMan's personal AI partner"
+  version: "1.0.0"
+  
+hermes:
+  enabled: true
+  strict_mode: true
+  hack_detection: true
+  orchestration_manager: true
+
+capabilities:
+  - personality
+  - knowledge_retrieval
+  - grants_research
+  - language_teaching
+  - autonomous_research
+  - google_integration
+  - learning_system
+
+integrations:
+  google_drive:
+    enabled: true
+    credentials: "./config/google_credentials.json"
+  google_calendar:
+    enabled: true
+    credentials: "./config/google_credentials.json"
+
+knowledge_bases:
+  - path: "./data/knowledge_bases/gii_kb.md"
+    name: "GII Knowledge Base"
+  - path: "./data/knowledge_bases/gii_connect_kb.md"
+    name: "GII Connect Knowledge Base"
+  - path: "./data/knowledge_bases/techievert_kb.md"
+    name: "TechieVert Knowledge Base"
+  - path: "./data/knowledge_bases/global_impact_innovators_kb.md"
+    name: "Global Impact Innovators Knowledge Base"
+
+learning:
+  enabled: true
+  log_path: "./data/learning/"
+  continuous_improvement: true

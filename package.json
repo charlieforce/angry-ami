@@ -1,0 +1,60 @@
+{
+  "name": "angry-ami",
+  "version": "1.0.0",
+  "description": "Angry Ami - Charlie is DeMan's Personal AI Partner",
+  "author": "Charlie is DeMan",
+  "homepage": "./",
+  "main": "public/electron.js",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "scripts": {
+    "react-start": "react-scripts start",
+    "react-build": "react-scripts build",
+    "electron-start": "electron .",
+    "electron-dev": "concurrently \"npm run react-start\" \"wait-on http://localhost:3000 && npm run electron-start\"",
+    "start": "npm run electron-dev",
+    "build": "npm run react-build && electron-builder"
+  },
+  "devDependencies": {
+    "react-scripts": "5.0.1",
+    "electron": "latest",
+    "electron-builder": "latest",
+    "electron-is-dev": "latest",
+    "concurrently": "latest",
+    "wait-on": "latest"
+  },
+  "build": {
+    "appId": "com.angrymami.app",
+    "productName": "Angry Ami",
+    "files": [
+      "public/electron.js",
+      "preload.js",
+      "build/**/*",
+      "venv/**/*",
+      "src/**/*",
+      "data/**/*",
+      "config/**/*",
+      ".env"
+    ],
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "category": "public.app-category.utilities"
+    }
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
