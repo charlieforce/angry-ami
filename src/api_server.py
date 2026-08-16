@@ -37,8 +37,8 @@ def init_agent():
     """Initialize Hermes Agent in background"""
     global agent, agent_ready
     try:
-        from src.agent import HermesAgent
-        from src.file_processor import FileProcessor
+        from agent import HermesAgent
+        from file_processor import FileProcessor
         print("\n[INITIALIZING HERMES AGENT...]")
         agent = HermesAgent()
         agent.file_processor = FileProcessor()
