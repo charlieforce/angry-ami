@@ -3,7 +3,7 @@ Load Ami's knowledge bases at startup
 """
 import os
 from pathlib import Path
-from src.utils import logger, get_config
+from utils import logger, get_config
 
 class KnowledgeLoader:
     def __init__(self):

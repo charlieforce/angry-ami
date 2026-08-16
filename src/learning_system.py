@@ -5,7 +5,7 @@ Learns from conversations, documents, feedback
 import os
 import json
 from datetime import datetime
-from src.utils import logger, get_config
+from utils import logger, get_config
 
 class LearningSystem:
     def __init__(self):

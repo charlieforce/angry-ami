@@ -6,7 +6,7 @@ Ami's Capabilities
 - Writing support
 - Autonomous research
 """
-from src.utils import logger
+from utils import logger
 
 class AmiCapabilities:
     def __init__(self, knowledge_loader):

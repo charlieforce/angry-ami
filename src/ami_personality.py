@@ -2,7 +2,7 @@
 Angry Ami's Personality
 Krio/English language switching, authenticity, caring nature
 """
-from src.utils import logger, get_config
+from utils import logger, get_config
 
 class AmiPersonality:
     def __init__(self):

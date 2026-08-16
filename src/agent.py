@@ -9,12 +9,12 @@ import random
 from dotenv import load_dotenv
 import google.generativeai as genai
 
-from src.utils import setup_logging, ensure_directories, get_config, logger
-from src.knowledge_loader import KnowledgeLoader
-from src.ami_personality import AmiPersonality
-from src.ami_capabilities import AmiCapabilities
-from src.learning_system import LearningSystem
-from src.google_integration import GoogleIntegration
+from utils import setup_logging, ensure_directories, get_config, logger
+from knowledge_loader import KnowledgeLoader
+from ami_personality import AmiPersonality
+from ami_capabilities import AmiCapabilities
+from learning_system import LearningSystem
+from google_integration import GoogleIntegration
 
 class HermesAgent:
     """
