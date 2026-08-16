@@ -14,7 +14,7 @@ from knowledge_loader import KnowledgeLoader
 from ami_personality import AmiPersonality
 from ami_capabilities import AmiCapabilities
 from learning_system import LearningSystem
-from google_integration import GoogleIntegration
+#from google_integration import GoogleIntegration
 
 class HermesAgent:
     """
@@ -59,7 +59,7 @@ class HermesAgent:
         self.learning = LearningSystem()
         logger.info("✓ Learning system initialized")
         
-        self.google = GoogleIntegration()
+        #self.google = GoogleIntegration()
         logger.info("✓ Google integration initialized")
         
         self.model = genai.GenerativeModel(
