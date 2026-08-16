@@ -6,7 +6,7 @@ from utils import logger, get_config
 
 class GoogleIntegration:
     def __init__(self):
-        self.credentials_path = get_config('GOOGLE_CREDENTIALS_PATH', './config/google_credentials.json')
+        self.credentials_path = get_config('GOOGLE_CREDENTIALS_PATH', '/etc/secrets/google_credentials.json')
         self.project_id = get_config('GOOGLE_CLOUD_PROJECT_ID', 'steadfast-rex-505517-a7')
         
         # Note: Full OAuth2 flow will be implemented when needed
